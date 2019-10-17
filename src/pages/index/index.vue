@@ -1,45 +1,42 @@
 <template>
-  <div @click="clickHandle">
-
-    <div class="userinfo" @click="bindViewTap">
-      <img class="userinfo-avatar" v-if="userInfo.avatarUrl" :src="userInfo.avatarUrl" background-size="cover" />
-      <img class="userinfo-avatar" src="/static/images/user.png" background-size="cover" />
-
-      <div class="userinfo-nickname">
-        <card :text="userInfo.nickName"></card>
+  <div>
+    <img src="/static/images/timg.jpg" id="bg-img">
+    <div id="content">
+      <div id="title">
+        <p>今日第</p> 
+        <p>{{ cnt }}</p>
+        <p>题</p>
       </div>
-    </div>
 
-    <div class="usermotto">
-      <div class="user-motto">
-        <card :text="motto"></card>
+      <div id="question" v-if="randomQuestion">
+        {{ randomQuestion.text }}
+        <div>
+          <div class="question-anws" @click="seletBoolHandler(randomQuestion.id, 'Y')">
+            正确
+          </div> 
+          <div class="question-anws question-no" @click="seletBoolHandler(randomQuestion.id, 'N')">
+            错误
+          </div>
+        </div> 
       </div>
-    </div>
 
-    <form class="form-container">
-      <input type="text" class="form-control" :value="motto" placeholder="v-model" />
-      <input type="text" class="form-control" v-model="motto" placeholder="v-model" />
-      <input type="text" class="form-control" v-model.lazy="motto" placeholder="v-model.lazy" />
-    </form>
-
-    <a href="/pages/counter/main" class="counter">去往Vuex示例页面</a>
-
-    <div class="all">
-        <div class="left">
-        </div>
-        <div class="right">
-        </div>
+      <div id="result">
+        {{ resultTip }}
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import card from '@/components/card'
-
+import questions from '@/data/questions'
 export default {
   data () {
     return {
-      motto: 'Hello miniprograme',
+      cnt: 0,
+      // randomNumber：this.randomRange(),
+      questions,
+      resultTip: "",
       userInfo: {
         nickName: 'mpvue',
         avatarUrl: 'http://mpvue.com/assets/logo.png'
@@ -47,25 +44,34 @@ export default {
     }
   },
 
-  components: {
-    card
-  },
-
   methods: {
-    bindViewTap () {
-      const url = '../logs/main'
-      if (mpvuePlatform === 'wx') {
-        mpvue.switchTab({ url })
-      } else {
-        mpvue.navigateTo({ url })
+    seletBoolHandler (qId, result) {
+      this.resultTip = "回答错误，再想一想吧"
+      var q = this.questions.filter(q => q.id === qId)
+      if (q && q[0] && q[0].answer === result) {
+        this.resultTip = "回答正确"
+        this.cnt++
+        setTimeout(() => this.nextQuestion(qId), 1000)
       }
     },
-    clickHandle (ev) {
-      console.log('clickHandle:', ev)
-      // throw {message: 'custom test'}
+    nextQuestion(curQid) {
+      console.log("nextQuestion")
+      this.resultTip = ""
+      this.questions = this.questions.filter(q => q.id !== curQid)
+      if (this.questions.length === 0) {
+        this.resultTip = "你把所有题目都答完啦，明天再来试试吧！"
+      }
     }
   },
-
+  computed: {
+    randomQuestion () {
+      if (this.questions.length === 0 ) {
+        return null
+      }
+      var id = Math.floor(Math.random() * (this.questions.length))
+      return this.questions[id]
+    },
+  },
   created () {
     // let app = getApp()
   }
@@ -73,6 +79,43 @@ export default {
 </script>
 
 <style scoped>
+#bg-img {
+  width: 100%;
+  height: 50px;
+}
+#content {
+  margin-top: 50px;
+  text-align: center;
+}
+#question {
+  margin-top: 30px;
+}
+.question-anws {
+  margin: 0 auto;
+  width: 50px;
+  height: 10px;
+  line-height: 10px;
+  margin-top: 30px;
+  padding: 1em 1.2em;
+	text-align: center;
+  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  border-radius:5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, .2);
+  color:#FFF;
+  box-shadow:0 1px 0 rgba(255, 255, 255, .5) inset, 0 -1px 0 rgba(255, 255, 255, .1) inset, 0 4px 0 #AD4257, 0 4px 2px rgba(0, 0, 0, .5);
+}
+
+.question-no {
+	background-image:linear-gradient(to bottom, #F66C7B, #D25068);
+}
+
+#result {
+  margin-top: 50px;
+}
+
+p {
+  display: inline-block;
+}
 .userinfo {
   display: flex;
   flex-direction: column;
@@ -94,33 +137,5 @@ export default {
   margin-top: 150px;
 }
 
-.form-control {
-  display: block;
-  padding: 0 12px;
-  margin-bottom: 5px;
-  border: 1px solid #ccc;
-}
-.all{
-  width:7.5rem;
-  height:1rem;
-  background-color:blue;
-}
-.all:after{
-  display:block;
-  content:'';
-  clear:both;
-}
-.left{
-  float:left;
-  width:3rem;
-  height:1rem;
-  background-color:red;
-}
 
-.right{
-  float:left;
-  width:4.5rem;
-  height:1rem;
-  background-color:green;
-}
 </style>
