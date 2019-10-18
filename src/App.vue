@@ -26,6 +26,9 @@ export default {
   },
   log () {
     console.log(`log at:${Date.now()}`)
+  },
+  created () {
+    wx.cloud.init({ env: 'dev-nusl4' })
   }
 }
 </script>

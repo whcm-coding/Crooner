@@ -1,7 +1,11 @@
 <template>
-  <div>
+  <div id="body">
     <img src="/static/images/timg.jpg" id="bg-img">
-    <div id="content">
+    <div v-if="questions.length === 0 && cnt === 0">
+      题目加载中，请稍后
+    </div>
+
+    <div id="content" v-if="questions.length !== 0"  >
       <div id="title">
         <p>今日第</p> 
         <p>{{ cnt }}</p>
@@ -11,31 +15,28 @@
       <div id="question" v-if="randomQuestion">
         {{ randomQuestion.text }}
         <div>
-          <div class="question-anws" @click="seletBoolHandler(randomQuestion.id, 'Y')">
+          <div class="question-anws" @click="seletBoolHandler(randomQuestion, 'Y')">
             正确
           </div> 
-          <div class="question-anws question-no" @click="seletBoolHandler(randomQuestion.id, 'N')">
+          <div class="question-anws question-no" @click="seletBoolHandler(randomQuestion, 'N')">
             错误
           </div>
         </div> 
       </div>
+    </div>
 
-      <div id="result">
-        {{ resultTip }}
-      </div>
+    <div id="result">
+      {{ resultTip }}
     </div>
   </div>
 </template>
 
 <script>
-import card from '@/components/card'
-import questions from '@/data/questions'
 export default {
   data () {
     return {
       cnt: 0,
-      // randomNumber：this.randomRange(),
-      questions,
+      questions: [],
       resultTip: "",
       userInfo: {
         nickName: 'mpvue',
@@ -45,19 +46,20 @@ export default {
   },
 
   methods: {
-    seletBoolHandler (qId, result) {
+    seletBoolHandler (question, result) {
       this.resultTip = "回答错误，再想一想吧"
-      var q = this.questions.filter(q => q.id === qId)
-      if (q && q[0] && q[0].answer === result) {
+      if (question.answer === result) {
         this.resultTip = "回答正确"
-        this.cnt++
-        setTimeout(() => this.nextQuestion(qId), 1000)
+        setTimeout(() =>{
+          this.nextQuestion(question._id)
+          this.cnt++
+        }, 1000)
       }
     },
     nextQuestion(curQid) {
       console.log("nextQuestion")
       this.resultTip = ""
-      this.questions = this.questions.filter(q => q.id !== curQid)
+      this.questions = this.questions.filter(q => q._id !== curQid)
       if (this.questions.length === 0) {
         this.resultTip = "你把所有题目都答完啦，明天再来试试吧！"
       }
@@ -73,12 +75,30 @@ export default {
     },
   },
   created () {
-    // let app = getApp()
+    const db = wx.cloud.database()
+    var questions = db.collection('questions')
+
+    const page = this
+    questions.get({
+      success (res) {
+        page.questions = res.data
+        console.log("all question count: ", res.data, page.questions.length)
+      },
+      // fail: (res) => {
+      //   console.log("fail", res)
+      // },
+      // complete () {
+      //   console.log("complete")
+      // }
+    })
   }
 }
 </script>
 
 <style scoped>
+#body {
+  text-align: center;
+}
 #bg-img {
   width: 100%;
   height: 50px;
@@ -111,6 +131,7 @@ export default {
 
 #result {
   margin-top: 50px;
+  text-align: center;
 }
 
 p {
