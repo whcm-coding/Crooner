@@ -12,22 +12,34 @@
         <p>题</p>
       </div>
 
-      <div id="question" v-if="randomQuestion">
+      <div class="question" v-if="randomQuestion">
         {{ randomQuestion.text }}
-        <div>
+        <div v-if="randomQuestion.type === 'bool'">
           <div class="question-anws" @click="seletBoolHandler(randomQuestion, 'Y')">
             正确
           </div> 
           <div class="question-anws question-no" @click="seletBoolHandler(randomQuestion, 'N')">
             错误
           </div>
-        </div> 
-      </div>
-    </div>
+        </div>
 
-    <div id="result">
+      <ol class="question choice" v-if="randomQuestion.type === 'choice'">
+        <checkbox-group class="choice-list" v-for="(l, idx) in randomQuestion.list" v-bind:key="l._id" @change="selectChoice">
+          <checkbox id="checkbox" :value="idx" />
+          {{ l }}
+        </checkbox-group>
+
+        <div class="question-anws" @click="onSubmitChoice(randomQuestion)">提交</div>
+      </ol>
+
+    </div>
+  </div>
+
+  <div id="result" v-if="resultTip" :class="resultactive">
+    <div class="tip-text">
       {{ resultTip }}
     </div>
+  </div>
   </div>
 </template>
 
@@ -37,27 +49,60 @@ export default {
     return {
       cnt: 0,
       questions: [],
-      resultTip: "",
-      userInfo: {
-        nickName: 'mpvue',
-        avatarUrl: 'http://mpvue.com/assets/logo.png'
-      }
+      checkedChoiceList: [],
+      resultTip: ""
     }
   },
 
   methods: {
-    seletBoolHandler (question, result) {
+    showError () {
       this.resultTip = "回答错误，再想一想吧"
+      setTimeout(() => {
+        this.resultTip = ""
+      }, 600)
+    },
+    showSucceed(question) {
+      this.resultTip = "回答正确"
+      setTimeout(() =>{
+        this.resultTip = ""
+        this.nextQuestion(question._id)
+        this.cnt++
+      }, 1000)
+    },
+    seletBoolHandler (question, result) {
       if (question.answer === result) {
-        this.resultTip = "回答正确"
-        setTimeout(() =>{
-          this.nextQuestion(question._id)
-          this.cnt++
-        }, 1000)
+        this.showSucceed(question)
+      } else {
+        this.showError()
+      }
+    },
+    selectChoice (evt) {
+      const target = evt.target
+      // hack：取消选中checkbox
+      if (target.value.length === 0) {
+        var targetIndex = target.dataset.eventid.split('_')[1]
+        // hack!
+        this.checkedChoiceList = this.checkedChoiceList.filter(idx => idx !== targetIndex)
+      }else {
+        this.checkedChoiceList.push(target.value[0])
+      }
+    },
+    onSubmitChoice (question) {
+      if (this.checkedChoiceList.length !== question.answer.length) {
+        this.checkedChoiceList = []
+        return this.showError()
+      }
+      var sortedCheckedList = this.checkedChoiceList.sort()
+      var answer = question.answer.sort()
+      if (sortedCheckedList.every((checked, idx) => checked === (answer[idx]+''))) {
+        this.checkedChoiceList = []
+        return this.showSucceed(question)
+      } else {
+        this.checkedChoiceList = []
+        return this.showError()
       }
     },
     nextQuestion(curQid) {
-      console.log("nextQuestion")
       this.resultTip = ""
       this.questions = this.questions.filter(q => q._id !== curQid)
       if (this.questions.length === 0) {
@@ -66,13 +111,16 @@ export default {
     }
   },
   computed: {
+    resultactive () {
+      return this.resultTip ? 'resultactive' : ''
+    },
     randomQuestion () {
       if (this.questions.length === 0 ) {
         return null
       }
       var id = Math.floor(Math.random() * (this.questions.length))
       return this.questions[id]
-    },
+    }
   },
   created () {
     const db = wx.cloud.database()
@@ -82,13 +130,11 @@ export default {
     questions.get({
       success (res) {
         page.questions = res.data
-        console.log("all question count: ", res.data, page.questions.length)
+        // page.questions = res.data.filter(d => d.type === "choice")
+        console.log("all question count: ", page.questions.length)
       },
       // fail: (res) => {
       //   console.log("fail", res)
-      // },
-      // complete () {
-      //   console.log("complete")
       // }
     })
   }
@@ -98,6 +144,7 @@ export default {
 <style scoped>
 #body {
   text-align: center;
+  padding: 0 10px;
 }
 #bg-img {
   width: 100%;
@@ -107,7 +154,7 @@ export default {
   margin-top: 50px;
   text-align: center;
 }
-#question {
+.question {
   margin-top: 30px;
 }
 .question-anws {
@@ -130,8 +177,40 @@ export default {
 }
 
 #result {
-  margin-top: 50px;
+  opacity: 1;
   text-align: center;
+  position: fixed;
+  /* top: 50%; */
+  /* left: 50%; */
+  width: 100%;
+  height: 100%; 
+  top: 0;
+  bottom: 0;
+  /* transform: translate(-50%, -50%); */
+  transition: opacity 0.5s ease-in;  
+  color: white;
+}
+#result.resultactive {
+  opacity: 0.5;
+  background:rgba(0,0,0);
+}
+.tip-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  bottom: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+}
+.choice {
+  margin: 30px auto 0 auto;
+  width: 50%;
+}
+.choice-list {
+  text-align: left;
+  margin-bottom: 15px;
 }
 
 p {
