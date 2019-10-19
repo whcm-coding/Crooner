@@ -1,4 +1,10 @@
 var questions = [{
+  id: 0,
+  type: 'choice',
+  text: "以下哪位不是黑衣人组织的？",
+  list: ["小哀","阿笠博士","琴酒","朗姆","贝尔摩多","毛利小五郎"],
+  answer: [1,5]
+}, {
    
   text: 'Python 是一种静态语言',
   type: 'bool',

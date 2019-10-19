@@ -4,7 +4,7 @@
     <div v-if="questions.length === 0 && cnt === 0">
       题目加载中，请稍后
     </div>
-
+    <!-- <div  v-if="randomQuestion">{{randomQuestion.answer}}</div> -->
     <div id="content" v-if="questions.length !== 0"  >
       <div id="title">
         <p>今日第</p> 
@@ -23,14 +23,14 @@
           </div>
         </div>
 
-      <ol class="question choice" v-if="randomQuestion.type === 'choice'">
-        <checkbox-group class="choice-list" v-for="(l, idx) in randomQuestion.list" v-bind:key="l._id" @change="selectChoice">
-          <checkbox id="checkbox" :value="idx" />
-          {{ l }}
-        </checkbox-group>
+        <ol class="question choice" v-if="!forceClear && randomQuestion.type === 'choice'">
+          <checkbox-group class="choice-list" v-for="(l, idx) in randomQuestion.list" v-bind:key="l._id" @change="selectChoice">
+            <checkbox :id="l._id" :value="idx" />
+            {{ l }}
+          </checkbox-group>
 
-        <div class="question-anws" @click="onSubmitChoice(randomQuestion)">提交</div>
-      </ol>
+          <div class="question-anws" @click="onSubmitChoice(randomQuestion)">提交</div>
+        </ol>
 
     </div>
   </div>
@@ -50,7 +50,8 @@ export default {
       cnt: 0,
       questions: [],
       checkedChoiceList: [],
-      resultTip: ""
+      resultTip: "",
+      forceClear: false
     }
   },
 
@@ -89,16 +90,18 @@ export default {
     },
     onSubmitChoice (question) {
       if (this.checkedChoiceList.length !== question.answer.length) {
-        this.checkedChoiceList = []
         return this.showError()
       }
       var sortedCheckedList = this.checkedChoiceList.sort()
       var answer = question.answer.sort()
       if (sortedCheckedList.every((checked, idx) => checked === (answer[idx]+''))) {
         this.checkedChoiceList = []
+        this.forceClear = true
+        // hack: to reset checkbox
+        setTimeout(() => this.forceClear = false, 0)
+        
         return this.showSucceed(question)
       } else {
-        this.checkedChoiceList = []
         return this.showError()
       }
     },
@@ -123,19 +126,19 @@ export default {
     }
   },
   created () {
-    const db = wx.cloud.database()
-    var questions = db.collection('questions')
-
     const page = this
-    questions.get({
-      success (res) {
-        page.questions = res.data
-        // page.questions = res.data.filter(d => d.type === "choice")
-        console.log("all question count: ", page.questions.length)
+    wx.cloud.callFunction({
+      name:"getQuestionList",
+      data: {},
+      success: res => {
+        var data = res.result.data
+        // data = data.filter(d => d.type==="choice")
+        console.log("success", data.length)
+        page.questions = data
       },
-      // fail: (res) => {
-      //   console.log("fail", res)
-      // }
+      fail: err => {
+        console.log(err)
+      }
     })
   }
 }
