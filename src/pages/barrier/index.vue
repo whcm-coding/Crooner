@@ -1,6 +1,6 @@
 <template>
   <div id="body">
-    <img src="/static/images/timg.jpg" id="bg-img">
+    <progress :percent="progressRatio" border-radius="5" stroke-width="10" />   
     <div v-if="questions.length === 0 && cnt === 0">
       题目加载中，请稍后
     </div>
@@ -12,7 +12,7 @@
         <p>题</p>
       </div>
 
-      <div class="question" v-if="randomQuestion">
+      <div class="question" v-if="randomQuestion && !isGameOver">
         {{ randomQuestion.text }}
         <div v-if="randomQuestion.type === 'bool'">
           <div class="question-anws" @click="seletBoolHandler(randomQuestion, 'Y')">
@@ -44,32 +44,97 @@
 </template>
 
 <script>
+const init = (page) => {
+  var thread = page.$root.$mp.query.thread
+  if (thread && page.gameover[thread]) {
+    page.resultTip = "今日份运气已经用完了，明天再来试试吧！"
+    return
+  }
+  page.cnt= 0
+  page.successCnt= 0
+  page.failedCnt= 0
+  page.questions= []
+  page.originalQuestionLen= 0
+  page.checkedChoiceList= []
+  page.resultTip= ""
+  page.forceClear= false
+  page.selecedThread= null
+
+  wx.cloud.callFunction({
+    name:"getQuestionList",
+    data: {},
+    success: res => {
+      var data = res.result.data
+      
+      page.selecedThread = page.$root.$mp.query.thread
+      console.log("thread", page.selecedThread)
+      console.log("success", data.length)
+
+      // page.questions = data
+
+      var filterd = data.filter(d => d.level === page.selecedThread)
+      page.questions = filterd
+      page.originalQuestionLen = filterd.length
+     console.log("filterd", filterd.length)
+    },
+    fail: err => {
+      console.log(err)
+    }
+  })
+  const db = wx.cloud.database()
+  var threadhold = db.collection("threadhold")
+  threadhold.get({
+    success (res) {
+      page.threadhold = res.data[0]
+    }
+  })
+}
+
 export default {
   data () {
     return {
       cnt: 0,
+      successCnt: 0,
+      failedCnt: 0,
       questions: [],
+      originalQuestionLen: 0,
       checkedChoiceList: [],
       resultTip: "",
-      forceClear: false
+      forceClear: false,
+      selecedThread: null,
+      threadhold: {
+        "0": 0.2,
+        "1": 0.5,
+        "2": 0.9
+      },
+      gameover: {
+        "0": false,
+        "1": false,
+        "2": false
+      }
     }
   },
-
+  // onShow () {
+  //   this.seletQuestions(this)
+  // },
   methods: {
     showError () {
-      this.resultTip = "回答错误，再想一想吧"
-      setTimeout(() => {
-        this.resultTip = ""
-      }, 600)
+      this.failedCnt++
+      this.showNextQuestion("回答错误")
     },
     showSucceed(question) {
-      this.resultTip = "回答正确"
+      this.successCnt++
+      this.showNextQuestion("回答正确")
+    },
+    showNextQuestion (tip) {
+      this.resultTip = tip
       setTimeout(() =>{
         this.resultTip = ""
-        this.nextQuestion(question._id)
+        this.nextQuestion(this.randomQuestion._id)
         this.cnt++
       }, 1000)
     },
+
     seletBoolHandler (question, result) {
       if (question.answer === result) {
         this.showSucceed(question)
@@ -89,21 +154,25 @@ export default {
       }
     },
     onSubmitChoice (question) {
+      this.resetCheckbox()
       if (this.checkedChoiceList.length !== question.answer.length) {
+        this.checkedChoiceList = []
         return this.showError()
       }
       var sortedCheckedList = this.checkedChoiceList.sort()
       var answer = question.answer.sort()
       if (sortedCheckedList.every((checked, idx) => checked === (answer[idx]+''))) {
         this.checkedChoiceList = []
-        this.forceClear = true
-        // hack: to reset checkbox
-        setTimeout(() => this.forceClear = false, 0)
-        
         return this.showSucceed(question)
       } else {
+        this.checkedChoiceList = []
         return this.showError()
       }
+    },
+    resetCheckbox () {
+      this.forceClear = true
+      // hack: to reset checkbox
+      setTimeout(() => this.forceClear = false, 0)
     },
     nextQuestion(curQid) {
       this.resultTip = ""
@@ -114,6 +183,26 @@ export default {
     }
   },
   computed: {
+    progressRatio () {
+      if (this.cnt === 0) return 0
+      return (this.successCnt / this.cnt)*100
+    },
+    isGameOver () {
+      var cnt = this.cnt
+      if (cnt <= 3) return false
+      // var failedR = this.failedCnt / this.originalQuestionLen
+      var ratio = this.successCnt / cnt
+      // console.log("failed",  failedR)
+      console.log("success",  ratio)
+      // console.log("all",  this.originalQuestionLen)
+      // console.log("ratio",  ratio)
+      if (ratio < this.threadhold[this.selecedThread]  ) {
+        this.resultTip = "今日份运气已经用完了，明天再来试试吧！"
+        this.gameover[this.selecedThread] = true
+        return true
+      }
+      return false
+    },
     resultactive () {
       return this.resultTip ? 'resultactive' : ''
     },
@@ -125,22 +214,10 @@ export default {
       return this.questions[id]
     }
   },
-  created () {
-    const page = this
-    wx.cloud.callFunction({
-      name:"getQuestionList",
-      data: {},
-      success: res => {
-        var data = res.result.data
-        // data = data.filter(d => d.type==="choice")
-        console.log("success", data.length)
-        page.questions = data
-      },
-      fail: err => {
-        console.log(err)
-      }
-    })
-  }
+  mounted () {
+    console.log("mounted")
+    init(this)
+  },
 }
 </script>
 

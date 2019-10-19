@@ -2,7 +2,9 @@
   <div id="content">
     <img class="img" :src="curImg" alt="图片加载中...">
     <a class="linkpage normal" href="/pages/normal/main">练一练</a>
-    <a class="linkpage barrier" href="/pages/barrier/main">闯关模式</a>
+    <picker  @change="bindPickerChange " class="linkpage barrier"  :value="index" :range="array">
+      闯关模式
+    </picker >
   </div>
 </template>
 
@@ -10,8 +12,19 @@
   export default {
     data() {
       return {
-        imgs: []
+        imgs: [],
+        index: 0,
+        array: ['简单','中等','高难'],
+        arrMapper: ["0", "1", "2"]
       }
+    },
+    methods: {
+      bindPickerChange  (args) {
+        this.index = args.mp.detail.value
+        setTimeout(() => {
+          wx.navigateTo({url: "/pages/barrier/main?thread="+ this.arrMapper[this.index]})
+        }, 300)
+      },
     },
     computed: {
       curImg () {
