@@ -23,15 +23,15 @@ ___
 ## 开发步骤
 本项目按照进行，提供两种方法：
 1. 难一点的规范化版本：[git的分支协作开发](https://segmentfault.com/a/1190000011010729)：
-  1.1. clone 本项目，此时会有一个 master 分支
-  1.2. ```git checkout -b your_brach_name```
-  1.3. 愉快地在你的分支上进行开发工作
-  1.4. 开发完成后, ```git push origin your_brach_name```
-  1.5. 在github上选择new pull request(如下图)
+    1. clone 本项目，此时会有一个 master 分支
+    2. ```git checkout -b your_brach_name```
+    3. 愉快地在你的分支上进行开发工作
+    4. 开发完成后, ```git push origin your_brach_name```
+    5. 在github上选择new pull request(如下图)
   ![new pull request ](./readmeImgs/mr.png)
   ![new pull request ](./readmeImgs/mr2.png)
        base 永远是master,compare选择你的分支即可
-  1.6. 每次开发之前:
+    6. 每次开发之前:
 
     ```
       git checkout master
@@ -39,16 +39,16 @@ ___
       git branch -D your_branch_name（如果每次取相同的名字就需要删掉。实际上不要每次都取一样的名字，比如dev之类的）
     ```
     
-    1.7. 从 1.2 开始重复
+    7. 从 1.2 开始重复
 
 ***
 2. 简单版本(不采用，这种方法无法维护项目，管理成本太大)：
-  2.1. clone 本项目
-  2.2. 愉快地进行开发工作
-  2.3. 提交代码之前```git pull origin master```
-  2.4. 痛苦的修复冲突，参考[git的分支协作开发](https://segmentfault.com/a/1190000011010729)文档中的“分支冲突解决”部分
-  2.5. 修复冲突后```git add .``` ```git commit -m"your message"```
-  2.5. 提交代码```git push origin master```
+    1. clone 本项目
+    2. 愉快地进行开发工作
+    3. 提交代码之前```git pull origin master```
+    4. 痛苦的修复冲突，参考[git的分支协作开发](https://segmentfault.com/a/1190000011010729)文档中的“分支冲突解决”部分
+    5. 修复冲突后```git add .``` ```git commit -m"your message"```
+    5. 提交代码```git push origin master```
 ***
 
 ## 注释说明
