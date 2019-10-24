@@ -1,13 +1,11 @@
 <template>
   <div id="body">
-    <progress :percent="progressRatio" border-radius="5" stroke-width="10" />   
-    <div v-if="questions.length === 0 && cnt === 0">
-      题目加载中，请稍后
-    </div>
+    <progress :percent="progressRatio" border-radius="5" stroke-width="10" />
+    <div v-if="questions.length === 0 && cnt === 0">题目加载中，请稍后</div>
     <!-- <div  v-if="randomQuestion">{{randomQuestion.answer}}</div> -->
-    <div id="content" v-if="questions.length !== 0"  >
+    <div id="content" v-if="questions.length !== 0">
       <div id="title">
-        <p>今日第</p> 
+        <p>今日第</p>
         <p>{{ cnt }}</p>
         <p>题</p>
       </div>
@@ -15,83 +13,81 @@
       <div class="question" v-if="randomQuestion && !isGameOver">
         {{ randomQuestion.text }}
         <div v-if="randomQuestion.type === 'bool'">
-          <div class="question-anws" @click="seletBoolHandler(randomQuestion, 'Y')">
-            正确
-          </div> 
-          <div class="question-anws question-no" @click="seletBoolHandler(randomQuestion, 'N')">
-            错误
-          </div>
+          <div class="question-anws" @click="seletBoolHandler(randomQuestion, 'Y')">正确</div>
+          <div class="question-anws question-no" @click="seletBoolHandler(randomQuestion, 'N')">错误</div>
         </div>
 
         <ol class="question choice" v-if="!forceClear && randomQuestion.type === 'choice'">
-          <checkbox-group class="choice-list" v-for="(l, idx) in randomQuestion.list" v-bind:key="l._id" @change="selectChoice">
+          <checkbox-group
+            class="choice-list"
+            v-for="(l, idx) in randomQuestion.list"
+            v-bind:key="l._id"
+            @change="selectChoice"
+          >
             <checkbox :id="l._id" :value="idx" />
             {{ l }}
           </checkbox-group>
 
           <div class="question-anws" @click="onSubmitChoice(randomQuestion)">提交</div>
         </ol>
-
+      </div>
     </div>
-  </div>
 
-  <div id="result" v-if="resultTip" :class="resultactive">
-    <div class="tip-text">
-      {{ resultTip }}
+    <div id="result" v-if="resultTip" :class="resultactive">
+      <div class="tip-text">{{ resultTip }}</div>
     </div>
-  </div>
   </div>
 </template>
 
 <script>
-const init = (page) => {
+const init = page => {
   var thread = page.$root.$mp.query.thread
   if (thread && page.gameover[thread]) {
-    page.resultTip = "今日份运气已经用完了，明天再来试试吧！"
+    page.resultTip = '今日份运气已经用完了，明天再来试试吧！'
     return
   }
-  page.cnt= 0
-  page.successCnt= 0
-  page.failedCnt= 0
-  page.questions= []
-  page.originalQuestionLen= 0
-  page.checkedChoiceList= []
-  page.resultTip= ""
-  page.forceClear= false
-  page.selecedThread= null
+  page.cnt = 0
+  page.successCnt = 0
+  page.failedCnt = 0
+  page.questions = []
+  page.originalQuestionLen = 0
+  page.checkedChoiceList = []
+  page.resultTip = ''
+  page.forceClear = false
+  page.selecedThread = null
 
   wx.cloud.callFunction({
-    name:"getQuestionList",
+    name: 'getQuestionList',
     data: {},
     success: res => {
       var data = res.result.data
-      
+
       page.selecedThread = page.$root.$mp.query.thread
-      console.log("thread", page.selecedThread)
-      console.log("success", data.length)
+      console.log('thread', page.selecedThread)
+      console.log('success', data.length)
 
       // page.questions = data
 
       var filterd = data.filter(d => d.level === page.selecedThread)
       page.questions = filterd
       page.originalQuestionLen = filterd.length
-     console.log("filterd", filterd.length)
+      console.log('filterd', filterd.length)
     },
     fail: err => {
       console.log(err)
-    }
+    },
   })
   const db = wx.cloud.database()
-  var threadhold = db.collection("threadhold")
+  var threadhold = db.collection('threadhold')
   threadhold.get({
-    success (res) {
+    success(res) {
       page.threadhold = res.data[0]
-    }
+    },
   })
 }
 
 export default {
-  data () {
+  data() {
     return {
       cnt: 0,
       successCnt: 0,
@@ -99,61 +95,63 @@ export default {
       questions: [],
       originalQuestionLen: 0,
       checkedChoiceList: [],
-      resultTip: "",
+      resultTip: '',
       forceClear: false,
       selecedThread: null,
       threadhold: {
-        "0": 0.2,
-        "1": 0.5,
-        "2": 0.9
+        '0': 0.2,
+        '1': 0.5,
+        '2': 0.9,
       },
       gameover: {
-        "0": false,
-        "1": false,
-        "2": false
-      }
+        '0': false,
+        '1': false,
+        '2': false,
+      },
     }
   },
   // onShow () {
   //   this.seletQuestions(this)
   // },
   methods: {
-    showError () {
+    showError() {
       this.failedCnt++
-      this.showNextQuestion("回答错误")
+      this.showNextQuestion('回答错误')
     },
     showSucceed(question) {
       this.successCnt++
-      this.showNextQuestion("回答正确")
+      this.showNextQuestion('回答正确')
     },
-    showNextQuestion (tip) {
+    showNextQuestion(tip) {
       this.resultTip = tip
-      setTimeout(() =>{
-        this.resultTip = ""
+      setTimeout(() => {
+        this.resultTip = ''
         this.nextQuestion(this.randomQuestion._id)
         this.cnt++
       }, 1000)
     },
 
-    seletBoolHandler (question, result) {
+    seletBoolHandler(question, result) {
       if (question.answer === result) {
         this.showSucceed(question)
       } else {
         this.showError()
       }
     },
-    selectChoice (evt) {
+    selectChoice(evt) {
       const target = evt.target
       // hack：取消选中checkbox
       if (target.value.length === 0) {
         var targetIndex = target.dataset.eventid.split('_')[1]
         // hack!
-        this.checkedChoiceList = this.checkedChoiceList.filter(idx => idx !== targetIndex)
-      }else {
+        this.checkedChoiceList = this.checkedChoiceList.filter(
+          idx => idx !== targetIndex
+        )
+      } else {
         this.checkedChoiceList.push(target.value[0])
       }
     },
-    onSubmitChoice (question) {
+    onSubmitChoice(question) {
       this.resetCheckbox()
       if (this.checkedChoiceList.length !== question.answer.length) {
         this.checkedChoiceList = []
@@ -161,7 +159,9 @@ export default {
       }
       var sortedCheckedList = this.checkedChoiceList.sort()
       var answer = question.answer.sort()
-      if (sortedCheckedList.every((checked, idx) => checked === (answer[idx]+''))) {
+      if (
+        sortedCheckedList.every((checked, idx) => checked === answer[idx] + '')
+      ) {
         this.checkedChoiceList = []
         return this.showSucceed(question)
       } else {
@@ -169,53 +169,53 @@ export default {
         return this.showError()
       }
     },
-    resetCheckbox () {
+    resetCheckbox() {
       this.forceClear = true
       // hack: to reset checkbox
-      setTimeout(() => this.forceClear = false, 0)
+      setTimeout(() => (this.forceClear = false), 0)
     },
     nextQuestion(curQid) {
-      this.resultTip = ""
+      this.resultTip = ''
       this.questions = this.questions.filter(q => q._id !== curQid)
       if (this.questions.length === 0) {
-        this.resultTip = "你把所有题目都答完啦，明天再来试试吧！"
+        this.resultTip = '你把所有题目都答完啦，明天再来试试吧！'
       }
-    }
+    },
   },
   computed: {
-    progressRatio () {
+    progressRatio() {
       if (this.cnt === 0) return 0
-      return (this.successCnt / this.cnt)*100
+      return this.successCnt / this.cnt * 100
     },
-    isGameOver () {
+    isGameOver() {
       var cnt = this.cnt
       if (cnt <= 3) return false
       // var failedR = this.failedCnt / this.originalQuestionLen
       var ratio = this.successCnt / cnt
       // console.log("failed",  failedR)
-      console.log("success",  ratio)
+      console.log('success', ratio)
       // console.log("all",  this.originalQuestionLen)
       // console.log("ratio",  ratio)
-      if (ratio < this.threadhold[this.selecedThread]  ) {
-        this.resultTip = "今日份运气已经用完了，明天再来试试吧！"
+      if (ratio < this.threadhold[this.selecedThread]) {
+        this.resultTip = '今日份运气已经用完了，明天再来试试吧！'
         this.gameover[this.selecedThread] = true
         return true
       }
       return false
     },
-    resultactive () {
+    resultactive() {
       return this.resultTip ? 'resultactive' : ''
     },
-    randomQuestion () {
-      if (this.questions.length === 0 ) {
+    randomQuestion() {
+      if (this.questions.length === 0) {
         return null
       }
-      var id = Math.floor(Math.random() * (this.questions.length))
+      var id = Math.floor(Math.random() * this.questions.length)
       return this.questions[id]
-    }
+    },
   },
-  mounted () {
-    console.log("mounted")
+  mounted() {
+    console.log('mounted')
     init(this)
   },
 }
@@ -244,16 +244,18 @@ export default {
   line-height: 10px;
   margin-top: 30px;
   padding: 1em 1.2em;
-	text-align: center;
+  text-align: center;
   background: linear-gradient(135deg, #6e8efb, #a777e3);
-  border-radius:5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, .2);
-  color:#FFF;
-  box-shadow:0 1px 0 rgba(255, 255, 255, .5) inset, 0 -1px 0 rgba(255, 255, 255, .1) inset, 0 4px 0 #AD4257, 0 4px 2px rgba(0, 0, 0, .5);
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  color: #fff;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset,
+    0 -1px 0 rgba(255, 255, 255, 0.1) inset, 0 4px 0 #ad4257,
+    0 4px 2px rgba(0, 0, 0, 0.5);
 }
 
 .question-no {
-	background-image:linear-gradient(to bottom, #F66C7B, #D25068);
+  background-image: linear-gradient(to bottom, #f66c7b, #d25068);
 }
 
 #result {
@@ -263,16 +265,16 @@ export default {
   /* top: 50%; */
   /* left: 50%; */
   width: 100%;
-  height: 100%; 
+  height: 100%;
   top: 0;
   bottom: 0;
   /* transform: translate(-50%, -50%); */
-  transition: opacity 0.5s ease-in;  
+  transition: opacity 0.5s ease-in;
   color: white;
 }
 #result.resultactive {
   opacity: 0.5;
-  background:rgba(0,0,0);
+  background: rgba(0, 0, 0);
 }
 .tip-text {
   position: absolute;
@@ -316,6 +318,4 @@ p {
 .usermotto {
   margin-top: 150px;
 }
-
-
 </style>
