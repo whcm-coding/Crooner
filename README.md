@@ -1,4 +1,5 @@
 # 这是小程序 Crooner 的代码
+
 ___
 
 ## 环境搭建
@@ -19,7 +20,7 @@ ___
 ![new pull request ](./readmeImgs/7.png)
    安装成功如下
 ![new pull request ](./readmeImgs/8.png)
-8. 安装微信开发者工具，也要根据自己电脑位数来安装
+8. 安装微信开发者工具，也要根据自己电脑系统的位数来安装(Windows系统下是32位/64位)
 ![new pull request ](./readmeImgs/9.png)
 ![new pull request ](./readmeImgs/10.png)
 9. 打开微信开发者工具，选择：项目->导入项目，导入此项目，需要配置小程序的appid，可以向项目贡献者询问。
@@ -30,7 +31,7 @@ ___
 ![new pull request ](./readmeImgs/13.png)
 11. 这时候打开我们的项目，找到src文件夹，点进去通过cmd到终端，输入npm  start。
 ![new pull request ](./readmeImgs/14.png)
-显示如下即可。再去小程序那里错误应该消失了。
+显示如下即可。再去小程序那里错误应该消失了，这时的小程序可以正常运行。
 ![new pull request ](./readmeImgs/15.png)
 12. 在微信开发者工具中，点“编译”按钮，即可看小程序界面
 ![new pull request ](./readmeImgs/16.png)
@@ -58,7 +59,7 @@ ___
   ![new pull request ](./readmeImgs/mr.png)
   ![new pull request ](./readmeImgs/mr2.png)
        base 永远是master,compare选择你的分支即可
-    6. 每次开发之前:
+    6. 在每次开发之前:
 
     ```
       git checkout master
@@ -66,7 +67,7 @@ ___
       git branch -D your_branch_name（如果每次取相同的名字就需要删掉。实际上不要每次都取一样的名字，比如dev之类的）
     ```
     
-    7. 从 1.2 开始重复
+    7. 从 1.2 开始重复(在每一步操作之后，可以使用【git status】检测操作之后的状态，避免出现操作错误)
 
 ***
 2. 简单版本(不采用，这种方法无法维护项目，管理成本太大)：
@@ -74,12 +75,27 @@ ___
     2. 愉快地进行开发工作
     3. 提交代码之前```git pull origin master```
     4. 痛苦的修复冲突，参考[git的分支协作开发](https://segmentfault.com/a/1190000011010729)文档中的“分支冲突解决”部分
-    5. 修复冲突后```git add .``` ```git commit -m"your message"```
+    5. 修复冲突后```git add .  （添加该项目下除.git的文件到暂存区）
+    ``` ```git commit -m"your message"```
     5. 提交代码```git push origin master```
 ***
+___
+
+##部分功能显示
+
+<img src="https://github.com/INDEXZEROING/-/blob/master/1.png" width="365" height="619" /> 	
+<img src="https://github.com/INDEXZEROING/-/blob/master/2.png" width="365" height="619"/> 
+
+
+<img src="https://github.com/INDEXZEROING/-/blob/master/3.png" width="365" height="619"/> 		
+<img src="https://github.com/INDEXZEROING/-/blob/master/4.png" width="365" height="619"/> 
+
+
 
 ## 注释说明
 1. 由于各种(懒)原因，代码中有一些hack或者todo标注的代码块，这种代码不建议参考，有兴趣(时间)可以修改一下
+2.本项目仅供学习参考。喜欢就动手点个star吧~^o^~
+
 ___
 ## 相关公众号推荐
 crooning
