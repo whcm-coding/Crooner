@@ -73,8 +73,9 @@ ___
 ***
 
 ## 需求管理
-本项目采用github的issue来管理需求。有任何需求可新建一个issue，详细说明要求和设计。感兴趣的同学可认领issue进行开发，避免彼此冲突。
+本项目采用github的issue来管理需求。有任何需求可新建一个issue，详细说明要求和设计。
 ![issue](./readmeImgs/issue-1.png)
+感兴趣的同学可认领issue进行开发，避免彼此冲突。
 ![assign](./readmeImgs/issue-2.png)
 ___
 
