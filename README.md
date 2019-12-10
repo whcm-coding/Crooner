@@ -2,37 +2,34 @@
 ___
 
 ## 环境搭建
-1. [使用mpvue开发小程序教程](https://www.jianshu.com/p/6f8d74be3ff8)（注意：在步骤 <font color='red'>创建第一个基于mpvue的小程序项目代码</font>）中，需要配置小程序的appid，暂时可以跳过此阶段。
-2. 点击第一步的蓝色链接
-![new pull request ](./readmeImgs/1.png)
-3. 点击之后往下翻找到node工具安装，点击链接
-![new pull request ](./readmeImgs/2.png)
+1. 在此之前我们可以学习一下[使用mpvue开发小程序教程](https://www.jianshu.com/p/6f8d74be3ff8)（注意：在步骤 <font color='red'>创建第一个基于mpvue的小程序项目代码</font>）中，需要配置小程序的appid，暂时可以跳过此阶段。
+2. 安装node工具，点击链接，[下载地址](https://nodejs.org/en/download/)
    下载版本不能搞错，根据自己的电脑是多少位来选择对应的下载版本，下载后即可安装。
 ![new pull request ](./readmeImgs/3.png)
-4. 直接在电脑终端执行这两个步骤（可检测是否安装成功）
+3. 直接在电脑终端执行这两个步骤（可检测是否安装成功）
 ![new pull request ](./readmeImgs/4.png)
-5. 接下来在终端继续执行npm install vue-cli –g，输入vue验证
+4. 接下来在终端继续执行npm install vue-cli –g，输入vue验证
 ![new pull request ](./readmeImgs/5.png)
-6. 下载本项目，放到自己能找的到的位置
+5. 下载本项目，放到自己能找的到的位置
 ![new pull request ](./readmeImgs/6.png)
-7. 在项目所在地进入终端，输入npm install。这个步骤相当于pipenv install。
+6. 在项目所在地进入终端，输入npm install。这个步骤相当于pipenv install。
 ![new pull request ](./readmeImgs/7.png)
    安装成功如下
 ![new pull request ](./readmeImgs/8.png)
-8. 安装微信开发者工具，也要根据自己电脑位数来安装
-![new pull request ](./readmeImgs/9.png)
+7. 安装微信开发者工具，也要根据自己电脑位数来安装
+[下载地址](https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html)
 ![new pull request ](./readmeImgs/10.png)
-9. 打开微信开发者工具，选择：项目->导入项目，导入此项目，需要配置小程序的appid，可以向项目贡献者询问。
+8. 打开微信开发者工具，选择：项目->导入项目，导入此项目，需要配置小程序的appid，可以向项目贡献者询问。
    记得在微信开发者工具的菜单》设置 》编辑设置 中，将“保存时自动编译小程序”勾选上。最后点击导入。
 ![new pull request ](./readmeImgs/11.png)
 ![new pull request ](./readmeImgs/12.png)
-10. 到这一步就快要成功了，不过你的微信小程序中红色方框里面会报错，应该是找不到app.json文件。
+9. 到这一步就快要成功了，不过你的微信小程序中红色方框里面会报错，应该是找不到app.json文件。
 ![new pull request ](./readmeImgs/13.png)
-11. 这时候打开我们的项目，找到src文件夹，点进去通过cmd到终端，输入npm  start。
+10. 这时候打开我们的项目，找到src文件夹，点进去通过cmd到终端，输入npm  start。
 ![new pull request ](./readmeImgs/14.png)
 显示如下即可。再去小程序那里错误应该消失了。
 ![new pull request ](./readmeImgs/15.png)
-12. 在微信开发者工具中，点“编译”按钮，即可看小程序界面
+11. 在微信开发者工具中，点“编译”按钮，即可看小程序界面
 ![new pull request ](./readmeImgs/16.png)
 ___
 
