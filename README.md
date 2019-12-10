@@ -3,7 +3,7 @@ ___
 
 ## 环境搭建
 1. 在此之前我们须阅读[使用mpvue开发小程序教程](https://www.jianshu.com/p/6f8d74be3ff8)（注意：在步骤 <font color='red'>创建第一个基于mpvue的小程序项目代码</font>）中，需要配置小程序的appid(所谓appid，是小程序的唯一标识，每个小程序都有自己的唯一appid)，可以使用自己的appid来创建第一个小程序。
-2. 参考上述教程安装 [nodejs](https://nodejs.org/en/download/)、[git](https://git-scm.com/downloads)（tips: 下载版本不能搞错，根据自己的电脑是多少位来选择对应的下载版本）
+2. 参考上述教程安装 [nodejs](https://nodejs.org/en/download/)、[git](https://git-scm.com/downloads)、[微信开发者工具](https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html)（tips: 下载版本不能搞错，根据自己的电脑是多少位来选择对应的下载版本）
 3. 执行这两个步骤（检测是否安装成功）
 ```
 node --version
@@ -17,16 +17,14 @@ git clone https://github.com/whcm-coding/Crooner.git
 ```
 npm install
 ```
-6. 安装[微信开发者工具](https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html)，也要根据自己电脑位数来安装
-7. 打开微信开发者工具，选择：项目->导入项目，导入此项目，需要配置小程序的appid，<font color='red'>应向项目贡献者询问</font>。记得在微信开发者工具的菜单》设置 》编辑设置 中，将“保存时自动编译小程序”勾选上。最后点击导入。
-8. 到这一步就快要成功了，不过你的微信小程序中红色方框里面会报错，应该是找不到app.json文件。
+6. 打开微信开发者工具，选择：项目->导入项目，导入此项目，需要配置小程序的appid，<font color='red'>应向项目贡献者询问</font>。记得在微信开发者工具的菜单》设置 》编辑设置 中，将“保存时自动编译小程序”勾选上。最后点击导入。
+7. 到这一步就快要成功了，不过你的微信小程序中红色方框里面会报错，应该是找不到app.json文件。
 ![new pull request ](./readmeImgs/13.png)
-9. 这时候打开我们的项目，找到src文件夹，点进去通过cmd到终端，输入
+8. 这时候打开我们的项目，找到src文件夹，点进去通过cmd到终端，输入下述命令再去小程序那里错误应该消失了。
 ```
   npm  start
 ```
-  再去小程序那里错误应该消失了。
-10. 在微信开发者工具中，点“编译”按钮，即可看小程序界面
+9. 在微信开发者工具中，点“编译”按钮，即可看小程序界面
 ![new pull request ](./readmeImgs/16.png)
 ___
 
