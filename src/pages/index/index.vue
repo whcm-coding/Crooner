@@ -1,6 +1,7 @@
 <template>
   <div id="content">
     <img class="img" :src="curImg" alt="图片加载中..." />
+    <van-icon class="nav" name="weapp-nav" size="30px" info="new"></van-icon>
     <a class="linkpage normal" href="/pages/normal/main">练一练</a>
     <picker @change="bindPickerChange " class="linkpage barrier" :value="index" :range="array">闯关模式</picker>
   </div>
@@ -77,5 +78,10 @@ export default {
 .barrier {
   margin-top: 70px;
   background-color: #f4511e;
+}
+.nav {
+  position: absolute;
+  right: 30px;
+  top: 15px;
 }
 </style>
