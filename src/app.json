@@ -3,7 +3,8 @@
     "pages/index/main",
     "pages/logs/main",
     "pages/normal/main",
-    "pages/barrier/main"
+    "pages/barrier/main",
+    "pages/ranking/main"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -24,24 +25,10 @@
         "selectedIconPath": "static/tabs/home-active.png"
       },
       {
-        "text": "答题记录",
-        "pagePath": "pages/logs/main",
+        "text": "上榜",
+        "pagePath": "pages/ranking/main",
         "iconPath": "static/tabs/orders.png",
         "selectedIconPath": "static/tabs/orders-active.png"
-      }
-    ],
-    "items": [
-      {
-        "name": "首页",
-        "pagePath": "pages/index/main",
-        "icon": "static/tabs/home.png",
-        "activeIcon": "static/tabs/home-active.png"
-      },
-      {
-        "name": "答题记录",
-        "pagePath": "pages/logs/main",
-        "icon": "static/tabs/orders.png",
-        "activeIcon": "static/tabs/orders-active.png"
       }
     ],
     "position": "bottom"

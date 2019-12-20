@@ -40,6 +40,7 @@
 </template>
 
 <script>
+import store from '../store'
 const init = page => {
   var thread = page.$root.$mp.query.thread
   if (thread && page.gameover[thread]) {
@@ -124,6 +125,7 @@ export default {
     },
     showNextQuestion(tip) {
       this.resultTip = tip
+      store.commit('updateQuestionCnt', 1)
       setTimeout(() => {
         this.resultTip = ''
         this.nextQuestion(this.randomQuestion._id)

@@ -40,6 +40,8 @@
 </template>
 
 <script>
+import store from '../store'
+
 export default {
   data() {
     return {
@@ -53,12 +55,15 @@ export default {
 
   methods: {
     showError() {
+      // store.commit('updateQuestionCnt', 1)
       this.resultTip = '回答错误，再想一想吧'
       setTimeout(() => {
         this.resultTip = ''
       }, 600)
     },
     showSucceed(question) {
+      store.commit('updateQuestionCnt', 1)
+
       this.resultTip = '回答正确'
       setTimeout(() => {
         this.resultTip = ''
