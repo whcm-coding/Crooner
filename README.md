@@ -77,6 +77,12 @@ ___
 ![assign](./readmeImgs/issue-2.png)
 ___
 
+## 第三方库
+### 引入了 [vant-weapp](https://youzan.github.io/vant-weapp/#/quickstart#yin-ru-zu-jian) 作为样式库。实际使用体验并不好。
+-  首先，微信开发者工具构建的 miniprogram-npm 不能满足需求，必须下载最新的 vant 到 dist 对应的目录中（开发同学不必担忧，这部分代码已经修改 webpack 配置自动完成）。
+- 其次，目前 vant 不能按需加载，导致初次启动微信开发者工具编译速度变慢。 
+- 最后，不建议使用 vant，后续有可能去掉这个库。总的来说，mpvue 使用第三方库体验很差。
+___
 ## 注释说明
 1. 由于各种(懒)原因，代码中有一些hack或者todo标注的代码块，这种代码不建议参考，有兴趣(时间)可以修改一下
 ___

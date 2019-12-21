@@ -1,20 +1,55 @@
 <template>
   <div id="content">
-    <swiper v-if="imgUrls.length > 0" indidator-dots="imgUrls.length > 1" autoplay circular>
+    <img
+      class="banner"
+      src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1576948228984&di=7fce54dcfaa67f8bdb0f223f266d1e2a&imgtype=0&src=http%3A%2F%2Fhbimg.b0.upaiyun.com%2Fdbc739b9f7b68bf63b823703b9d7a62622db98bd11c21-iBpavz_fw658"
+      alt
+    />
+    <span class="text text1">看看</span>
+    <span class="text text2">谁</span>
+    <span class="text text3">最棒</span>
+    <span class="text text4">?</span>
+    <div class="question_count" v-if="questionCountRanking && questionCountRanking.length">
+      <div class="top top1">
+        <div class="top-star">
+          <img src="/static/images/star1.png" class="star-icon" />
+          <img src="/static/images/star1.png" class="star-icon" />
+          <img src="/static/images/star1.png" class="star-icon" />
+        </div>
+
+        <img :src="questionCountRanking[0].avatar_url" class="avatar" />
+        <span class="nick-name">{{ questionCountRanking[0].nick_name }}</span>
+      </div>
+      <div class="top top2" v-if="questionCountRanking[1]">
+        <div class="top-star">
+          <img src="/static/images/star2.png" class="star-icon" />
+          <img src="/static/images/star2.png" class="star-icon" />
+        </div>
+        <img :src="questionCountRanking[1].avatar_url" class="avatar" />
+
+        <span class="nick-name">{{ questionCountRanking[1].nick_name }}</span>
+      </div>
+      <div class="top top3" v-if="questionCountRanking[2]">
+        <div class="top-star">
+          <img src="/static/images/star3.png" class="star-icon" />
+        </div>
+        <img :src="questionCountRanking[2].avatar_url" class="avatar" />
+        <span class="nick-name">{{ questionCountRanking[2].nick_name }}</span>
+      </div>
+    </div>
+    <swiper
+      v-if="imgUrls.length > 0"
+      indidator-dots="imgUrls.length > 1"
+      autoplay
+      circular
+      class="swiper-view"
+    >
       <div v-for="(item, index) in imgUrls" :key="index">
         <swiper-item>
           <image :src="item" class="swiper-item" />
         </swiper-item>
       </div>
     </swiper>
-    <div class="question_count">答题总量排行榜</div>
-    <div v-for="r in questionCountRanking" :key="r._id">
-      <div>
-        {{ r.nick_name }}
-        <img :src=" r.avatar_url" />
-        {{ r.question_count }}
-      </div>
-    </div>
   </div>
 </template>
 
@@ -54,9 +89,18 @@ export default {
           Utils.genId(data[idx].nick_name, data[idx].avatar_url) ===
           Utils.genId(state.nickName, state.avatarUrl)
         ) {
-          Utils.updateRanking(db, data[idx]._id, {
-            question_count: state.questionCount,
-          })
+          //1. 当缓存的总数大于数据库中的总数时，更新数据库
+          //2. 否则，更新缓存
+          if (state.questionCount > data[idx].question_count) {
+            Utils.updateRanking(db, data[idx]._id, {
+              question_count: state.questionCount,
+            })
+          } else {
+            store.commit(
+              'updateQuestionCnt',
+              data[idx].question_count - state.questionCount
+            )
+          }
         }
         page.getRankingList()
         return
@@ -91,8 +135,128 @@ export default {
 </script>
 
 <style scoped>
+#content {
+  text-align: center;
+}
+.banner {
+  width: 100%;
+  height: 115px;
+  margin-top: -56px;
+}
 .swiper-item {
   height: 100%;
   width: 100%;
+}
+
+.question_count {
+  text-align: center;
+}
+.text {
+  display: inline-block;
+  font-weight: bold;
+  font-size: 30px;
+  letter-spacing: 8px;
+  line-height: 52px;
+  -webkit-text-fill-color: #61c4ee;
+  -webkit-text-stroke: 1px #4ae86d;
+}
+.text1 {
+  transform: rotate(-7.12deg);
+  margin-left: 25px;
+}
+.text2 {
+  font-size: 40px;
+  margin: 0 15px;
+  transform: rotate(-4.46deg);
+  -webkit-text-fill-color: #f466ab;
+  -webkit-text-stroke: 1px #60c3ed;
+  animation: rotate 1s ease infinite;
+}
+.text3 {
+  transform: rotate(2.93deg);
+}
+.text4 {
+  font-size: 40px;
+  transform: rotate(3.93deg);
+  vertical-align: bottom;
+  margin-left: 10px;
+}
+.top {
+  margin-top: 20px;
+  animation: blink 3s ease-in-out infinite;
+}
+.avatar {
+  width: 38px;
+  height: 38px;
+  vertical-align: middle;
+  background-clip: padding-box;
+}
+
+.nick-name {
+  margin-left: 15px;
+  vertical-align: middle;
+  font-weight: bold;
+}
+.top1 .nick-name {
+  color: #fd6767;
+}
+.top2 .nick-name {
+  color: #8e67fd;
+}
+.top3 .nick-name {
+  color: #67fda3;
+}
+.star-icon {
+  width: 22px;
+  height: 100%;
+  vertical-align: middle;
+}
+
+.top-star {
+  display: inline-block;
+  width: 100px;
+  height: 22px;
+}
+
+.swiper-view {
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+}
+
+@keyframes rotate {
+  0% {
+    transform: translateY(-20);
+  }
+  25% {
+    transform: translateY(-10px);
+  }
+  50% {
+    transform: translateY(0px) scale(1.1, 0.9);
+  }
+  75% {
+    ransform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(-20);
+  }
+}
+
+@keyframes blink {
+  0% {
+    opacity: 0.9;
+    filter: alpha(opacity=20);
+    -webkit-transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    filter: alpha(opacity=50);
+    -webkit-transform: scale(1.2);
+  }
+  100% {
+    opacity: 0.9;
+    filter: alpha(opacity=20);
+    -webkit-transform: scale(1);
+  }
 }
 </style>
