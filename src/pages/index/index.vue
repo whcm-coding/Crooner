@@ -1,7 +1,7 @@
 <template>
   <div id="content">
-    <img class="img" :src="curImg" alt="图片加载中..." />
-    <van-icon class="nav" name="weapp-nav" size="30px" info="new"></van-icon>
+    <img class="img" :src="curImg.url" alt="图片加载中..." />
+    <van-icon class="nav" :name="imgIcon" size="30px" info="new" @click="onClickNav"></van-icon>
     <a class="linkpage normal" href="/pages/normal/main">练一练</a>
     <picker @change="bindPickerChange " class="linkpage barrier" :value="index" :range="array">闯关模式</picker>
   </div>
@@ -16,6 +16,7 @@ export default {
       index: 0,
       array: ['简单', '中等', '高难'],
       arrMapper: ['0', '1', '2'],
+      shouldPlayMusic: false,
     }
   },
   methods: {
@@ -27,6 +28,29 @@ export default {
         })
       }, 300)
     },
+    onClickNav() {
+      console.log('click', this.curImg)
+      const page = this
+      this.shouldPlayMusic = !this.shouldPlayMusic
+      if (this.shouldPlayMusic && this.curImg) {
+        wx.showModal({
+          title: '贴心小提示',
+          content: '请检查你的音量，最怕空气突然的不安静哦~',
+          success(res) {
+            if (res.confirm) {
+              wx.playBackgroundAudio({
+                dataUrl: page.curImg.audio,
+                title: '背景音乐',
+              })
+            } else if (res.cancel) {
+              page.shouldPlayMusic = !page.shouldPlayMusic
+            }
+          },
+        })
+      } else {
+        wx.stopBackgroundAudio()
+      }
+    },
   },
   computed: {
     curImg() {
@@ -34,7 +58,13 @@ export default {
         return ''
       }
       var id = Math.floor(Math.random() * this.imgs.length)
-      return this.imgs[id].url
+      return this.imgs[id]
+    },
+    imgIcon() {
+      if (this.shouldPlayMusic) {
+        return 'music-o'
+      }
+      return 'pause-circle-o'
     },
   },
   created() {

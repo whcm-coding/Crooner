@@ -25,7 +25,7 @@
         "selectedIconPath": "static/tabs/home-active.png"
       },
       {
-        "text": "上榜",
+        "text": "排行榜",
         "pagePath": "pages/ranking/main",
         "iconPath": "static/tabs/orders.png",
         "selectedIconPath": "static/tabs/orders-active.png"

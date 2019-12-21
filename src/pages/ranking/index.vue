@@ -1,5 +1,12 @@
 <template>
   <div id="content">
+    <swiper v-if="imgUrls.length > 0" indidator-dots="imgUrls.length > 1" autoplay circular>
+      <div v-for="(item, index) in imgUrls" :key="index">
+        <swiper-item>
+          <image :src="item" class="swiper-item" />
+        </swiper-item>
+      </div>
+    </swiper>
     <div class="question_count">答题总量排行榜</div>
     <div v-for="r in questionCountRanking" :key="r._id">
       <div>
@@ -19,6 +26,11 @@ export default {
   data() {
     return {
       questionCountRanking: null,
+      imgUrls: [
+        '/static/images/gzh.png',
+        '/static/images/mp.png',
+        '/static/images/t.png',
+      ],
     }
   },
   methods: {
@@ -79,4 +91,8 @@ export default {
 </script>
 
 <style scoped>
+.swiper-item {
+  height: 100%;
+  width: 100%;
+}
 </style>
