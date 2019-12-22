@@ -126,6 +126,36 @@ export default {
       }
     },
   },
+  created() {
+    wx.navigateTo({
+      url: '/pages/author/main',
+    })
+    const fail = res => console.error('getSetting failed: ', res)
+    const success = res => {
+      console.log('success', res)
+      wx.getUserInfo({
+        success(res) {
+          var userInfo = res.userInfo
+          console.log('userInfo', userInfo)
+          store.commit('setNickName', userInfo.nickName)
+          store.commit('setAvatarUrl', userInfo.avatarUrl)
+        },
+      })
+    }
+    wx.getSetting({
+      success(res) {
+        if (res.authSetting['scope.userInfo']) {
+          success(res)
+        } else {
+          console.log('to author')
+          wx.navigateTo({
+            url: '/pages/author/main',
+          })
+        }
+      },
+      fail,
+    })
+  },
   computed: {},
   onTabItemTap() {
     const page = this
@@ -190,6 +220,7 @@ export default {
   height: 38px;
   vertical-align: middle;
   background-clip: padding-box;
+  border-radius: 50%;
 }
 
 .nick-name {
@@ -197,15 +228,7 @@ export default {
   vertical-align: middle;
   font-weight: bold;
 }
-.top1 .nick-name {
-  color: #fd6767;
-}
-.top2 .nick-name {
-  color: #8e67fd;
-}
-.top3 .nick-name {
-  color: #67fda3;
-}
+
 .star-icon {
   width: 22px;
   height: 100%;

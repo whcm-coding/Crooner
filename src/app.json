@@ -4,7 +4,8 @@
     "pages/logs/main",
     "pages/normal/main",
     "pages/barrier/main",
-    "pages/ranking/main"
+    "pages/ranking/main",
+    "pages/author/main"
   ],
   "window": {
     "backgroundTextStyle": "light",

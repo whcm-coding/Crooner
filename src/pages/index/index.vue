@@ -69,32 +69,6 @@ export default {
   },
   created() {
     const page = this
-    const fail = res => console.error('getSetting failed: ', err)
-    const success = res => {
-      wx.getUserInfo({
-        success(res) {
-          var userInfo = res.userInfo
-          console.log('userInfo', userInfo)
-          store.commit('setNickName', userInfo.nickName)
-          store.commit('setAvatarUrl', userInfo.avatarUrl)
-        },
-      })
-    }
-    wx.getSetting({
-      success(res) {
-        if (res.authSetting['scope.userInfo']) {
-          success(res)
-        } else {
-          wx.authorize({
-            scope: 'scope.userInfo',
-            success,
-            faill,
-          })
-        }
-      },
-      fail,
-    })
-
     const db = wx.cloud.database()
     var imgs = db.collection('images')
     imgs.get({
