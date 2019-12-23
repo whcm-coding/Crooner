@@ -237,11 +237,15 @@ export default {
   margin-left: 15px;
   vertical-align: middle;
   font-weight: bold;
+  text-overflow: ellipsis;
+  width: 80px;
+  display: inline-block;
+  overflow: hidden;
   font-size: 16px;
 }
 .detail {
   display: inline-block;
-  width: 100px;
+  width: 140px;
   text-overflow: ellipsis;
   text-align: left;
 }
