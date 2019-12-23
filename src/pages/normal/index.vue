@@ -138,7 +138,7 @@ export default {
       success: res => {
         var data = res.result.data
         // data = data.filter(d => d.type==="choice")
-        console.log('success', data.length)
+        console.log('getQuestionList', data.length)
         page.questions = data
       },
       fail: err => {

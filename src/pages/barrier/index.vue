@@ -65,7 +65,7 @@ const init = page => {
 
       page.selecedThread = page.$root.$mp.query.thread
       console.log('thread', page.selecedThread)
-      console.log('success', data.length)
+      console.log('getQuestionList', data.length)
 
       // page.questions = data
 
@@ -195,7 +195,7 @@ export default {
       // var failedR = this.failedCnt / this.originalQuestionLen
       var ratio = this.successCnt / cnt
       // console.log("failed",  failedR)
-      console.log('success', ratio)
+      console.log('ratio', ratio)
       // console.log("all",  this.originalQuestionLen)
       // console.log("ratio",  ratio)
       if (ratio < this.threadhold[this.selecedThread]) {

@@ -17,24 +17,30 @@
           <img src="/static/images/star1.png" class="star-icon" />
         </div>
 
-        <img :src="questionCountRanking[0].avatar_url" class="avatar" />
-        <span class="nick-name">{{ questionCountRanking[0].nick_name }}</span>
+        <div class="detail">
+          <img :src="questionCountRanking[0].avatar_url" class="avatar" />
+          <span class="nick-name">{{ questionCountRanking[0].nick_name }}</span>
+        </div>
       </div>
       <div class="top top2" v-if="questionCountRanking[1]">
         <div class="top-star">
           <img src="/static/images/star2.png" class="star-icon" />
           <img src="/static/images/star2.png" class="star-icon" />
         </div>
-        <img :src="questionCountRanking[1].avatar_url" class="avatar" />
+        <div class="detail">
+          <img :src="questionCountRanking[1].avatar_url" class="avatar" />
 
-        <span class="nick-name">{{ questionCountRanking[1].nick_name }}</span>
+          <span class="nick-name">{{ questionCountRanking[1].nick_name }}</span>
+        </div>
       </div>
       <div class="top top3" v-if="questionCountRanking[2]">
         <div class="top-star">
           <img src="/static/images/star3.png" class="star-icon" />
         </div>
-        <img :src="questionCountRanking[2].avatar_url" class="avatar" />
-        <span class="nick-name">{{ questionCountRanking[2].nick_name }}</span>
+        <div class="detail">
+          <img :src="questionCountRanking[2].avatar_url" class="avatar" />
+          <span class="nick-name">{{ questionCountRanking[2].nick_name }}</span>
+        </div>
       </div>
     </div>
     <swiper
@@ -78,6 +84,7 @@ export default {
       })
     },
     updateRankingList(data) {
+      const maxRankingLen = 3
       const page = this
       const state = store.state
       const db = wx.cloud.database()
@@ -101,8 +108,15 @@ export default {
               data[idx].question_count - state.questionCount
             )
           }
+          page.getRankingList()
+          return
         }
-        page.getRankingList()
+      }
+
+      if (data.length < maxRankingLen) {
+        Utils.addRanking(db, state, newRanking => {
+          page.getRankingList()
+        })
         return
       }
 
@@ -112,9 +126,7 @@ export default {
         i--
       }
 
-      const maxRankingLen = 3
       if (i !== data.length - 1) {
-        console.log('should update rankelist')
         if (data.length === 3) {
           Utils.rmRankingOne(db, data[i + 1]._id)
         }
@@ -124,15 +136,13 @@ export default {
           page.questionCountRanking = data
         })
       }
+      console.log('no update', state)
     },
   },
   created() {
-    wx.navigateTo({
-      url: '/pages/author/main',
-    })
     const fail = res => console.error('getSetting failed: ', res)
     const success = res => {
-      console.log('success', res)
+      console.log('getSetting', res)
       wx.getUserInfo({
         success(res) {
           var userInfo = res.userInfo
@@ -227,8 +237,14 @@ export default {
   margin-left: 15px;
   vertical-align: middle;
   font-weight: bold;
+  font-size: 16px;
 }
-
+.detail {
+  display: inline-block;
+  width: 100px;
+  text-overflow: ellipsis;
+  text-align: left;
+}
 .star-icon {
   width: 22px;
   height: 100%;
